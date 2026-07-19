@@ -1,0 +1,12 @@
+{
+  "name": "gurps-express",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=@gurps-express/rules-engine",
+    "typecheck": "npm run typecheck --workspace=@gurps-express/rules-engine"
+  }
+}

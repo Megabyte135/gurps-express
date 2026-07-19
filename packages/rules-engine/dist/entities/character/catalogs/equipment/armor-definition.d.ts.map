@@ -1,0 +1,1 @@
+{"version":3,"file":"armor-definition.d.ts","sourceRoot":"","sources":["../../../../../src/entities/character/catalogs/equipment/armor-definition.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,OAAO,EAAE,MAAM,oBAAoB,CAAC;AAElD,MAAM,WAAW,eAAe;IAC9B,QAAQ,CAAC,gBAAgB,EAAE,OAAO,CAAC;IACnC,QAAQ,CAAC,SAAS,EAAE,SAAS,MAAM,EAAE,CAAC;CACvC"}
