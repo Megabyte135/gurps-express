@@ -1,6 +1,6 @@
-import type { CharacterAttribute } from "../attributes/attribute.js";
+import type { Attribute } from "../attributes/attribute.js";
 
 export interface CharacterAttributeCollection {
-  readonly primary: readonly CharacterAttribute[];
-  readonly secondaryAdjustments: readonly CharacterAttribute[];
+  readonly primary: readonly Attribute[];
+  readonly secondaryAdjustments: readonly Attribute[];
 }

@@ -1,9 +1,15 @@
 import type { Decimal, EntityId } from "../common.js";
+import type { Formula } from "../formulas/formula.js";
 import type { ChangeOperand, ValueChange, ValueChangeInput } from "./value-change.js";
 
 export interface ChangeTrackedValueSnapshot {
-  readonly baseValue: Decimal;
+  readonly baseValue: Formula;
   readonly changesList: readonly ValueChange[];
+}
+
+/** Evaluates a formula in the aggregate that owns this value. */
+export interface FormulaResolver {
+  resolve(formula: Formula): Decimal;
 }
 
 const DECIMAL_PATTERN = /^-?(0|[1-9][0-9]*)(\.[0-9]+)?$/;
@@ -20,20 +26,22 @@ interface DecimalParts {
  * baseValue when a change is removed.
  */
 export class ChangeTrackedValue {
-  #baseValue: Decimal;
+  #baseValue: Formula;
   readonly #changesList: ValueChange[];
-  #value: Decimal;
+  readonly #formulaResolver: FormulaResolver;
 
-  public constructor(snapshot: ChangeTrackedValueSnapshot) {
-    this.#baseValue = normalizeDecimal(snapshot.baseValue);
+  public constructor(snapshot: ChangeTrackedValueSnapshot, formulaResolver: FormulaResolver) {
+    this.#baseValue = snapshot.baseValue;
+    this.#formulaResolver = formulaResolver;
     this.#changesList = [...snapshot.changesList].map(normalizeChange);
     assertUniqueChangeIds(this.#changesList);
     assertContiguousSequence(this.#changesList);
-    this.#value = replay(this.#baseValue, this.#changesList);
   }
 
-  public get baseValue(): Decimal { return this.#baseValue; }
-  public get value(): Decimal { return this.#value; }
+  public get baseValue(): Formula { return this.#baseValue; }
+  public get value(): Decimal {
+    return replay(normalizeDecimal(this.#formulaResolver.resolve(this.#baseValue)), this.#changesList);
+  }
   public get changesList(): readonly ValueChange[] { return this.#changesList.map(cloneChange); }
 
   public change(input: ValueChangeInput): ValueChange {
@@ -42,7 +50,6 @@ export class ChangeTrackedValue {
     }
     const change = normalizeChange({ ...input, sequence: this.#changesList.length + 1 });
     this.#changesList.push(change);
-    this.#value = replay(this.#baseValue, this.#changesList);
     return cloneChange(change);
   }
 
@@ -53,14 +60,12 @@ export class ChangeTrackedValue {
     this.#changesList.forEach((change, position) => {
       this.#changesList[position] = { ...change, sequence: position + 1 };
     });
-    this.#value = replay(this.#baseValue, this.#changesList);
     return true;
   }
 
-  /** Replaces a formula-derived baseline while preserving all explicit changes. */
-  public rebase(baseValue: Decimal): void {
-    this.#baseValue = normalizeDecimal(baseValue);
-    this.#value = replay(this.#baseValue, this.#changesList);
+  /** Replaces the baseline formula while preserving all explicit changes. */
+  public rebase(baseValue: Formula): void {
+    this.#baseValue = baseValue;
   }
 
   public toSnapshot(): ChangeTrackedValueSnapshot {
