@@ -16,9 +16,13 @@
   ],
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "typecheck": "tsc --project tsconfig.json --noEmit"
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "test": "tsx --test src/entities/character/anatomy/tests/*.test.ts",
+    "test:coverage": "tsx --test --experimental-test-coverage src/entities/character/anatomy/tests/*.test.ts"
   },
   "devDependencies": {
+    "@types/node": "^26.1.1",
+    "tsx": "^4.23.1",
     "typescript": "^5.8.3"
   }
 }

@@ -3,10 +3,6 @@ import type { Formula } from "../../formulas/formula.js";
 import type { ChangeTrackedValue } from "../../values/change-tracked-value.js";
 import type { AttributeImprovementRule } from "./attribute-improvement-rule.js";
 
-/**
- * One configurable attribute. It is used unchanged in CharacterPreset and
- * in Character; character-specific values populate `value`.
- */
 export interface CharacterAttribute {
   readonly id: string;
   readonly catalogKey: CatalogKey;
