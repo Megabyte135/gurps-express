@@ -1,1 +1,10 @@
 prototypes/
+node_modules/
+*.tsbuildinfo
+coverage/
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+npm-debug.log*

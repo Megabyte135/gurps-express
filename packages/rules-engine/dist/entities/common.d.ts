@@ -4,6 +4,14 @@ export type Decimal = string;
 export type EntityId = string;
 /** A stable key copied from a catalog entity. It is not a catalog link. */
 export type CatalogKey = string;
+/** Success or failure returned by domain operations that can be invalid. */
+export type Result<T, E> = {
+    readonly ok: true;
+    readonly value: T;
+} | {
+    readonly ok: false;
+    readonly error: E;
+};
 /** JSON accepted in catalog-owned extension points after schema validation. */
 export type JsonValue = boolean | null | number | string | readonly JsonValue[] | {
     readonly [key: string]: JsonValue;
