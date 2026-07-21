@@ -1,6 +1,6 @@
 import type { CatalogKey, Decimal, Entity, JsonSchema, JsonValue } from "../../common.js";
 import type { Effect } from "../effects/effect.js";
-import type { AcquisitionMode, AcquisitionRule } from "./acquisition-rule.js";
+import type { TraitAcquisitionMode } from "./trait-acquisition-mode.js";
 import type { Modifier } from "./modifiers/modifier.js";
 import type { Prerequisite } from "./prerequisite.js";
 
@@ -12,8 +12,8 @@ export interface Trait extends Entity {
   readonly name: string;
   readonly description: string;
   readonly tags: readonly string[];
-  readonly acquisitionRules: readonly AcquisitionRule[];
-  readonly acquisition: { readonly mode: AcquisitionMode; readonly value: Decimal } | null;
+  readonly acquisitionRules: readonly TraitAcquisitionMode[];
+  readonly acquisition: { readonly value: Decimal } | null;
   readonly selectionsSchema: JsonSchema;
   readonly selections: Readonly<Record<string, JsonValue>>;
   readonly prerequisites: readonly Prerequisite[];

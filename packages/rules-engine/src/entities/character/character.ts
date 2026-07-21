@@ -17,6 +17,7 @@ export interface Character {
   readonly identity: CharacterIdentity;
   readonly build: CharacterBuild;
   readonly skillImprovementCostFormula: Formula;
+  readonly skillTrainingFormula: Formula;
   readonly attributes: CharacterAttributeCollection;
   readonly traits: readonly Trait[];
   readonly skills: readonly Skill[];

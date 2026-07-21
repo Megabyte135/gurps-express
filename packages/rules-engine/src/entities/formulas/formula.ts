@@ -10,6 +10,10 @@ export type Formula =
 
 export type FormulaTarget =
   | { readonly kind: "attribute"; readonly attributeId: EntityId; readonly value: "base" | "improvement" | "effective" }
-  | { readonly kind: "skill"; readonly skillId: EntityId; readonly value: "base" | "improvement" | "effective" }
+  | { readonly kind: "skill"; readonly skillId: EntityId; readonly value: "base" | "improvement" | "effective" | "experience" }
   | { readonly kind: "resource"; readonly resourceId: EntityId; readonly value: "current" | "minimum" | "maximum" }
-  | { readonly kind: "variable"; readonly name: "level" | "difficulty" };
+  | { readonly kind: "variable"; readonly name: FormulaVariable };
+
+export type FormulaVariable = "level" | "difficulty" | "experience" | "trainingModifier";
+
+export type FormulaVariables = Readonly<Partial<Record<FormulaVariable, Decimal>>>;
