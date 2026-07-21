@@ -1,8 +1,14 @@
 import type { CatalogKey, Computable, Decimal, EntityId, Result } from "../../common.js";
+import {
+  absoluteDecimal,
+  addDecimals,
+  compareDecimals,
+  multiplyDecimals,
+  normalizeDecimal,
+  subtractDecimals,
+} from "../../decimal.js";
 import type { Formula } from "../../formulas/formula.js";
 import type { ComputedValue, FormulaResolver } from "../../values/computed-value.js";
-
-const DECIMAL_PATTERN = /^-?(0|[1-9][0-9]*)(\.[0-9]+)?$/;
 
 interface InvalidResourceValueError {
   readonly code: "invalid-resource-value";
@@ -124,7 +130,7 @@ export class Resource implements Computable {
   }
 
   public set value(next: Decimal) {
-    const normalized = normalizeDecimal(next);
+    const normalized = validateResourceDecimal(next);
     if (!normalized.ok) throw new TypeError(normalized.error.message);
     const validated = validateResourceValue(normalized.value, this.#minimumValue, this.maximumValue.value);
     if (!validated.ok) throw new RangeError(validated.error.message);
@@ -147,7 +153,7 @@ function buildResource(
   const validatedThresholds = validateAndNormalizeThresholds(input.thresholds, minimumValue, maximumValue);
   if (!validatedThresholds.ok) return validatedThresholds;
 
-  const value = normalizeDecimal(input.value);
+  const value = validateResourceDecimal(input.value);
   if (!value.ok) return value;
 
   const normalizedValue = value.value;
@@ -169,15 +175,14 @@ function generateThresholdsFromStep(
   const step = evaluateDecimalFormula(stepFormula, formulaResolver);
   if (!step.ok) return step;
 
-  const range = subtractDecimal(maximumValue, minimumValue);
-  const normalizedRange = formatDecimal(range);
-  const normalizedRangeIsPositive = compare(normalizedRange, "0") > 0;
-  const normalizedRangeIsNegative = compare(normalizedRange, "0") < 0;
+  const range = subtractDecimals(maximumValue, minimumValue);
+  const normalizedRangeIsPositive = compareDecimals(range, "0") > 0;
+  const normalizedRangeIsNegative = compareDecimals(range, "0") < 0;
   if (!normalizedRangeIsPositive && !normalizedRangeIsNegative) {
     return { ok: true, value: [maximumValue] };
   }
 
-  const direction = compare(step.value, "0");
+  const direction = compareDecimals(step.value, "0");
   if (direction === 0) {
     return {
       ok: false,
@@ -189,8 +194,8 @@ function generateThresholdsFromStep(
     };
   }
 
-  const stepSize = multiplyDecimal(absDecimal(step.value), formatDecimal(absDecimal(range)));
-  if (compare(stepSize, "0") === 0) {
+  const stepSize = multiplyDecimals(absoluteDecimal(step.value), absoluteDecimal(range));
+  if (compareDecimals(stepSize, "0") === 0) {
     return {
       ok: false,
       error: {
@@ -210,13 +215,13 @@ function generateThresholdsFromStep(
   while (true) {
     result.push(current);
 
-    const next = generateDownward ? subtractDecimal(current, stepSize) : addDecimal(current, stepSize);
-    if (compare(next, end) === 0) {
+    const next = generateDownward ? subtractDecimals(current, stepSize) : addDecimals(current, stepSize);
+    if (compareDecimals(next, end) === 0) {
       result.push(next);
       break;
     }
 
-    const reachedBoundary = generateDownward ? compare(next, end) < 0 : compare(next, end) > 0;
+    const reachedBoundary = generateDownward ? compareDecimals(next, end) < 0 : compareDecimals(next, end) > 0;
     if (reachedBoundary) {
       result.push(end);
       break;
@@ -237,7 +242,7 @@ function validateAndNormalizeThresholds(
   const invalidValues: unknown[] = [];
 
   for (const threshold of thresholds) {
-    const normalized = normalizeDecimal(threshold);
+    const normalized = validateResourceDecimal(threshold);
     if (!normalized.ok) {
       invalidValues.push(threshold);
       continue;
@@ -264,7 +269,7 @@ function validateAndNormalizeThresholds(
 }
 
 function validateRange(minimumValue: Decimal, maximumValue: Decimal): Result<void, InvalidResourceRangeError> {
-  if (compare(minimumValue, maximumValue) > 0) {
+  if (compareDecimals(minimumValue, maximumValue) > 0) {
     return {
       ok: false,
       error: {
@@ -302,7 +307,7 @@ function evaluateDecimalFormula(
   formulaResolver: FormulaResolver,
 ): Result<Decimal, InvalidResourceFormulaError> {
   const resolved = formulaResolver.resolve(formula);
-  const value = normalizeDecimal(resolved);
+  const value = validateResourceDecimal(resolved);
   if (!value.ok) {
     return {
       ok: false,
@@ -317,11 +322,13 @@ function evaluateDecimalFormula(
 }
 
 function isInRange(value: Decimal, minimumValue: Decimal, maximumValue: Decimal): boolean {
-  return compare(value, minimumValue) >= 0 && compare(value, maximumValue) <= 0;
+  return compareDecimals(value, minimumValue) >= 0 && compareDecimals(value, maximumValue) <= 0;
 }
 
-function normalizeDecimal(value: Decimal): Result<Decimal, InvalidResourceValueError | InvalidResourceFormulaError> {
-  if (!isDecimal(value)) {
+function validateResourceDecimal(value: Decimal): Result<Decimal, InvalidResourceValueError | InvalidResourceFormulaError> {
+  try {
+    return { ok: true, value: normalizeDecimal(value) };
+  } catch {
     return {
       ok: false,
       error: {
@@ -331,81 +338,4 @@ function normalizeDecimal(value: Decimal): Result<Decimal, InvalidResourceValueE
       },
     };
   }
-  return { ok: true, value: formatDecimal(parseDecimal(value)) };
-}
-
-interface DecimalParts {
-  readonly unscaled: bigint;
-  readonly scale: number;
-}
-
-function absDecimal(value: Decimal): Decimal {
-  return value.startsWith("-") ? value.slice(1) : value;
-}
-
-function isDecimal(value: Decimal): boolean {
-  return DECIMAL_PATTERN.test(value);
-}
-
-function parseDecimal(value: Decimal): DecimalParts {
-  const negative = value.startsWith("-");
-  const unsigned = negative ? value.slice(1) : value;
-  const [whole, fraction = ""] = unsigned.split(".");
-  const unscaled = BigInt(`${whole}${fraction}`) * (negative ? -1n : 1n);
-  return { unscaled, scale: fraction.length };
-}
-
-function formatDecimal(parts: DecimalParts): Decimal {
-  let { unscaled, scale } = normalizeParts(parts);
-  if (unscaled === 0n) return "0";
-  const signPrefix = unscaled < 0n ? "-" : "";
-  const digits = (unscaled < 0n ? -unscaled : unscaled).toString();
-  if (scale === 0) return `${signPrefix}${digits}`;
-  const padded = digits.padStart(scale + 1, "0");
-  return `${signPrefix}${padded.slice(0, -scale)}.${padded.slice(-scale)}`;
-}
-
-function normalizeParts(parts: DecimalParts): DecimalParts {
-  let { unscaled, scale } = parts;
-  while (scale > 0 && unscaled % 10n === 0n) {
-    unscaled /= 10n;
-    scale -= 1;
-  }
-  return { unscaled, scale };
-}
-
-function compare(left: Decimal, right: Decimal): number {
-  const leftParts = normalizeParts(parseDecimal(left));
-  const rightParts = normalizeParts(parseDecimal(right));
-  const scale = Math.max(leftParts.scale, rightParts.scale);
-  const alignedLeft = leftParts.unscaled * 10n ** BigInt(scale - leftParts.scale);
-  const alignedRight = rightParts.unscaled * 10n ** BigInt(scale - rightParts.scale);
-  if (alignedLeft < alignedRight) return -1;
-  if (alignedLeft > alignedRight) return 1;
-  return 0;
-}
-
-function alignScale(left: Decimal, right: Decimal): [bigint, bigint, number] {
-  const leftParsed = parseDecimal(left);
-  const rightParsed = parseDecimal(right);
-  const scale = Math.max(leftParsed.scale, rightParsed.scale);
-  const leftAligned = leftParsed.unscaled * 10n ** BigInt(scale - leftParsed.scale);
-  const rightAligned = rightParsed.unscaled * 10n ** BigInt(scale - rightParsed.scale);
-  return [leftAligned, rightAligned, scale];
-}
-
-function addDecimal(left: Decimal, right: Decimal): Decimal {
-  const [leftAligned, rightAligned, scale] = alignScale(left, right);
-  return formatDecimal({ unscaled: leftAligned + rightAligned, scale });
-}
-
-function subtractDecimal(left: Decimal, right: Decimal): Decimal {
-  const [leftAligned, rightAligned, scale] = alignScale(left, right);
-  return formatDecimal({ unscaled: leftAligned - rightAligned, scale });
-}
-
-function multiplyDecimal(left: Decimal, right: Decimal): Decimal {
-  const leftParts = parseDecimal(left);
-  const rightParts = parseDecimal(right);
-  return formatDecimal({ unscaled: leftParts.unscaled * rightParts.unscaled, scale: leftParts.scale + rightParts.scale });
 }
