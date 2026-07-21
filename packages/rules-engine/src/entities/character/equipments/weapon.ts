@@ -1,10 +1,15 @@
+import type { Item } from "./item.js";
 import type { Decimal } from "../../common.js";
 
-export interface Weapon {
-  readonly id: string;
-  readonly name: string;
-  readonly usage: "melee" | "ranged";
+export interface WeaponSkillModifier {
   readonly skillId: string;
+  readonly modifier: number;
+}
+
+/** A weapon item with per-skill attack modifiers. */
+export interface Weapon extends Item {
+  readonly usage: "melee" | "ranged";
+  readonly skills: readonly WeaponSkillModifier[];
   readonly damage: string;
   readonly damageType: string;
   readonly reach: string | null;

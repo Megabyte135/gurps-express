@@ -1,5 +1,5 @@
 import type { CharacterPreset } from "./character/character-preset.js";
-import type { Equipment } from "./character/equipments/equipment.js";
+import type { Item } from "./character/equipments/item.js";
 import type { Skill } from "./character/skills/skill.js";
 import type { Trait } from "./character/traits/trait.js";
 import type { Modifier } from "./character/traits/modifiers/modifier.js";
@@ -13,5 +13,5 @@ export interface Catalogs {
   readonly traits: readonly Trait[];
   readonly skills: readonly Skill[];
   readonly modifiers: readonly Modifier[];
-  readonly equipment: readonly Equipment[];
+  readonly equipment: readonly Item[];
 }
