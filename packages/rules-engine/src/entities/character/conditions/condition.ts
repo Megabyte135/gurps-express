@@ -1,9 +1,9 @@
-import type { CatalogKey, EntityId } from "../../common.js";
+import type { CatalogKey, Entity } from "../../common.js";
 import type { Effect } from "../effects/effect.js";
 
-export interface Condition {
-  readonly id: EntityId;
+export interface Condition extends Entity {
   readonly catalogKey: CatalogKey;
+  readonly type: "condition";
   readonly name: string;
   readonly description: string;
   readonly iconUrl: string | null;

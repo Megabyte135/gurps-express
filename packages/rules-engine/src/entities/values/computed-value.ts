@@ -1,10 +1,10 @@
 import type { Decimal, EntityId } from "../common.js";
 import type { Formula } from "../formulas/formula.js";
-import type { ChangeOperand, ValueChange, ValueChangeInput } from "./value-change.js";
+import type { ComputedValueMutation, ComputedValueMutationInput } from "./value-mutation.js";
 
-export interface ChangeTrackedValueSnapshot {
+export interface ComputedValueSnapshot {
   readonly baseValue: Formula;
-  readonly changesList: readonly ValueChange[];
+  readonly changesList: readonly ComputedValueMutation[];
 }
 
 /** Evaluates a formula in the aggregate that owns this value. */
@@ -21,19 +21,19 @@ interface DecimalParts {
 }
 
 /**
- * A parameter value with an append-only, reversible history. `value` cannot be
- * assigned directly: every mutation creates a ValueChange and is replayed from
- * baseValue when a change is removed.
+ * A value that can be changed over time by reversible mutations.
+ * Mutations are stored in an append-only history; computed value is always
+ * replayed from baseValue so removal is safe and deterministic.
  */
-export class ChangeTrackedValue {
+export class ComputedValue {
   #baseValue: Formula;
-  readonly #changesList: ValueChange[];
+  readonly #changesList: ComputedValueMutation[];
   readonly #formulaResolver: FormulaResolver;
 
-  public constructor(snapshot: ChangeTrackedValueSnapshot, formulaResolver: FormulaResolver) {
+  public constructor(snapshot: ComputedValueSnapshot, formulaResolver: FormulaResolver) {
     this.#baseValue = snapshot.baseValue;
     this.#formulaResolver = formulaResolver;
-    this.#changesList = [...snapshot.changesList].map(normalizeChange);
+    this.#changesList = [...snapshot.changesList].map(normalizeMutation);
     assertUniqueChangeIds(this.#changesList);
     assertContiguousSequence(this.#changesList);
   }
@@ -42,18 +42,18 @@ export class ChangeTrackedValue {
   public get value(): Decimal {
     return replay(normalizeDecimal(this.#formulaResolver.resolve(this.#baseValue)), this.#changesList);
   }
-  public get changesList(): readonly ValueChange[] { return this.#changesList.map(cloneChange); }
+  public get changesList(): readonly ComputedValueMutation[] { return this.#changesList.map(cloneMutation); }
 
-  public change(input: ValueChangeInput): ValueChange {
+  public applyMutation(input: ComputedValueMutationInput): ComputedValueMutation {
     if (this.#changesList.some((change) => change.id === input.id)) {
       throw new Error(`A change with id ${input.id} already exists.`);
     }
-    const change = normalizeChange({ ...input, sequence: this.#changesList.length + 1 });
+    const change = normalizeMutation({ ...input, sequence: this.#changesList.length + 1 });
     this.#changesList.push(change);
-    return cloneChange(change);
+    return cloneMutation(change);
   }
 
-  public revertChange(changeId: EntityId): boolean {
+  public removeMutation(changeId: EntityId): boolean {
     const index = this.#changesList.findIndex((change) => change.id === changeId);
     if (index === -1) return false;
     this.#changesList.splice(index, 1);
@@ -68,12 +68,12 @@ export class ChangeTrackedValue {
     this.#baseValue = baseValue;
   }
 
-  public toSnapshot(): ChangeTrackedValueSnapshot {
+  public toSnapshot(): ComputedValueSnapshot {
     return { baseValue: this.#baseValue, changesList: this.changesList };
   }
 }
 
-function normalizeChange(change: ValueChange): ValueChange {
+function normalizeMutation(change: ComputedValueMutation): ComputedValueMutation {
   if (!Number.isSafeInteger(change.sequence) || change.sequence < 1) {
     throw new RangeError("A change sequence must be a positive safe integer.");
   }
@@ -87,29 +87,29 @@ function normalizeChange(change: ValueChange): ValueChange {
   };
 }
 
-function cloneChange(change: ValueChange): ValueChange {
+function cloneMutation(change: ComputedValueMutation): ComputedValueMutation {
   return { ...change, source: { ...change.source } };
 }
 
-function assertUniqueChangeIds(changes: readonly ValueChange[]): void {
+function assertUniqueChangeIds(changes: readonly ComputedValueMutation[]): void {
   if (new Set(changes.map((change) => change.id)).size !== changes.length) {
     throw new Error("Change identifiers must be unique.");
   }
 }
 
-function assertContiguousSequence(changes: readonly ValueChange[]): void {
+function assertContiguousSequence(changes: readonly ComputedValueMutation[]): void {
   const ordered = [...changes].sort((left, right) => left.sequence - right.sequence);
   if (ordered.some((change, index) => change.sequence !== index + 1)) {
     throw new Error("Change sequences must start at 1 and be contiguous.");
   }
 }
 
-function replay(baseValue: Decimal, changes: readonly ValueChange[]): Decimal {
+function replay(baseValue: Decimal, changes: readonly ComputedValueMutation[]): Decimal {
   return [...changes].sort((left, right) => left.sequence - right.sequence)
-    .reduce<Decimal>((value, change) => applyChange(value, change), baseValue);
+    .reduce<Decimal>((value, change) => applyMutation(value, change), baseValue);
 }
 
-function applyChange(value: Decimal, change: ValueChange): Decimal {
+function applyMutation(value: Decimal, change: ComputedValueMutation): Decimal {
   switch (change.operand) {
     case "add": return add(value, change.magnitude);
     case "multiply": return multiply(value, change.magnitude);
@@ -142,12 +142,16 @@ function format(parts: DecimalParts): Decimal {
 
 function normalize(parts: DecimalParts): DecimalParts {
   let { unscaled, scale } = parts;
-  while (scale > 0 && unscaled % 10n === 0n) { unscaled /= 10n; scale -= 1; }
+  while (scale > 0 && unscaled % 10n === 0n) {
+    unscaled /= 10n;
+    scale -= 1;
+  }
   return { unscaled, scale };
 }
 
 function add(left: Decimal, right: Decimal): Decimal {
-  const a = parseDecimal(left); const b = parseDecimal(right);
+  const a = parseDecimal(left);
+  const b = parseDecimal(right);
   const scale = Math.max(a.scale, b.scale);
   return format({
     unscaled: a.unscaled * 10n ** BigInt(scale - a.scale) + b.unscaled * 10n ** BigInt(scale - b.scale),
@@ -156,12 +160,14 @@ function add(left: Decimal, right: Decimal): Decimal {
 }
 
 function multiply(left: Decimal, right: Decimal): Decimal {
-  const a = parseDecimal(left); const b = parseDecimal(right);
+  const a = parseDecimal(left);
+  const b = parseDecimal(right);
   return format({ unscaled: a.unscaled * b.unscaled, scale: a.scale + b.scale });
 }
 
 function divide(left: Decimal, right: Decimal): Decimal {
-  const a = parseDecimal(left); const b = parseDecimal(right);
+  const a = parseDecimal(left);
+  const b = parseDecimal(right);
   if (b.unscaled === 0n) throw new RangeError("A value change cannot divide by zero.");
   const numerator = a.unscaled * 10n ** BigInt(DIVISION_SCALE + b.scale);
   const denominator = b.unscaled * 10n ** BigInt(a.scale);

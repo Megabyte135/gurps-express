@@ -1,16 +1,15 @@
-import type { CatalogKey, Decimal, EntityId, JsonSchema, JsonValue } from "../../common.js";
+import type { CatalogKey, Decimal, Computable, JsonSchema, JsonValue } from "../../common.js";
 import type { Formula } from "../../formulas/formula.js";
 import type { Effect } from "../effects/effect.js";
 import type { AcquisitionMode, AcquisitionRule } from "../traits/acquisition-rule.js";
 import type { Modifier } from "../traits/modifiers/modifier.js";
 import type { Prerequisite } from "../traits/prerequisite.js";
-import type { ChangeTrackedValue } from "../../values/change-tracked-value.js";
+import type { ComputedValue } from "../../values/computed-value.js";
 import type { SkillBase } from "./skill-base.js";
 
-export interface Skill {
-  readonly id: EntityId;
+export interface Skill extends Computable {
   readonly catalogKey: CatalogKey;
-  readonly kind: "skill";
+  readonly type: "skill";
   readonly category: "skill";
   readonly name: string;
   readonly description: string;
@@ -30,5 +29,5 @@ export interface Skill {
   readonly defaultFormulas: readonly Formula[];
   /** The points invested by the player. */
   readonly experience: Decimal;
-  readonly value: ChangeTrackedValue;
+  readonly value: ComputedValue;
 }

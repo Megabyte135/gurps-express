@@ -4,6 +4,17 @@ export type Decimal = string;
 /** UUID string identifying an entity embedded in an aggregate. */
 export type EntityId = string;
 
+export type EntityType = string;
+
+/** Base identity for any persisted object in the character aggregate. */
+export interface Entity {
+  readonly id: EntityId;
+  readonly type: EntityType;
+}
+
+/** An entity that owns `ComputedValue` field. */
+export interface Computable extends Entity {}
+
 /** A stable key copied from a catalog entity. It is not a catalog link. */
 export type CatalogKey = string;
 

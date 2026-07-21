@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { Attribute } from "../attribute.js";
-import { ChangeTrackedValue, type FormulaResolver } from "../../../values/change-tracked-value.js";
+import { ComputedValue, type FormulaResolver } from "../../../values/computed-value.js";
 
 const constant = (value: string) => ({ kind: "constant" as const, value });
 const resolver: FormulaResolver = {
@@ -11,7 +11,7 @@ const resolver: FormulaResolver = {
   },
 };
 
-const value = () => new ChangeTrackedValue({ baseValue: constant("10"), changesList: [] }, resolver);
+const value = () => new ComputedValue({ baseValue: constant("10"), changesList: [] }, resolver);
 const rule = { maximumLevel: "0", costFormula: constant("0") };
 
 const input = () => ({

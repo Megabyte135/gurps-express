@@ -1,6 +1,6 @@
-import type { CatalogKey, Decimal, EntityId } from "../../common.js";
+import type { CatalogKey, Computable, Decimal, EntityId } from "../../common.js";
 import type { Formula } from "../../formulas/formula.js";
-import { ChangeTrackedValue } from "../../values/change-tracked-value.js";
+import { ComputedValue } from "../../values/computed-value.js";
 import type { AttributeImprovementRule } from "./attribute-improvement-rule.js";
 
 export interface AttributeInput {
@@ -14,12 +14,13 @@ export interface AttributeInput {
   readonly calculation: Formula | null;
   readonly positiveImprovement: AttributeImprovementRule;
   readonly negativeImprovement: AttributeImprovementRule;
-  readonly value: ChangeTrackedValue;
+  readonly value: ComputedValue;
 }
 
 /** One configurable attribute shared by character presets and characters. */
-export class Attribute {
+export class Attribute implements Computable {
   readonly id: EntityId;
+  readonly type: "attribute" = "attribute";
   readonly catalogKey: CatalogKey;
   readonly name: string;
   readonly description: string;
@@ -29,7 +30,7 @@ export class Attribute {
   readonly negativeImprovement: AttributeImprovementRule;
   #minValue: Decimal;
   #calculation: Formula | null;
-  #value: ChangeTrackedValue;
+  #value: ComputedValue;
 
   public constructor(input: AttributeInput) {
     this.id = input.id;
@@ -59,8 +60,8 @@ export class Attribute {
     if (value !== null) this.#value.rebase(value);
   }
 
-  public get value(): ChangeTrackedValue { return this.#value; }
-  public set value(value: ChangeTrackedValue) {
+  public get value(): ComputedValue { return this.#value; }
+  public set value(value: ComputedValue) {
     this.#value = value;
     if (this.#calculation !== null) this.#value.rebase(this.#calculation);
   }
