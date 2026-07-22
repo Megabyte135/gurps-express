@@ -32,7 +32,7 @@ test("CharacterFormulaResolver resolves attributes, skills, and skill fields", (
 
   assert.equal(resolver.resolve("attr.ST + skill.Melee"), "27");
   assert.equal(resolver.resolve("skill.Melee.trainingModifier + skill.Melee.experience"), "6");
-  assert.equal(resolver.resolve("difficulty + 1", { difficulty: "-2" }), "-1");
+  assert.equal(resolver.resolve("$difficulty + 1", { difficulty: "-2" }), "-1");
 });
 
 test("CharacterFormulaResolver rejects malformed and unknown references", () => {

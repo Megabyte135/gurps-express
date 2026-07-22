@@ -1,5 +1,6 @@
 prototypes/
 node_modules/
+packages/*/dist/
 *.tsbuildinfo
 coverage/
 .env

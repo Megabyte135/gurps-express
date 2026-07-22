@@ -23,5 +23,5 @@ export function createAttributeSkillDefault(
   attributeTechnicalName: TechnicalName,
   skillTechnicalName: TechnicalName,
 ): Formula {
-  return `attr.${attributeTechnicalName} + difficulty + skill.${skillTechnicalName}.trainingModifier`;
+  return `attr.${attributeTechnicalName} + $difficulty + skill.${skillTechnicalName}.trainingModifier`;
 }
