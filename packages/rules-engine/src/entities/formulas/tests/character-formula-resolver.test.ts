@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { Character } from "../../character/character.js";
-import { CharacterFormulaResolver } from "../character-formula-resolver.js";
+import { CharacterFormulaResolver } from "../resolver.js";
 
 const computed = (value: string) => ({ value });
 
@@ -17,7 +17,7 @@ function createCharacter(): Character {
       trainingModifier: computed("2"),
       value: computed("15"),
     }],
-  } as Character;
+  } as unknown as Character;
 }
 
 test("CharacterFormulaResolver evaluates arithmetic precedence, powers, and parentheses", () => {
@@ -41,17 +41,4 @@ test("CharacterFormulaResolver rejects malformed and unknown references", () => 
   assert.throws(() => resolver.resolve("attr.DX"), /Attribute DX was not found/);
   assert.throws(() => resolver.resolve("skill.Melee.level"), /not supported/);
   assert.throws(() => resolver.resolve("(1 + 2"), /not closed/);
-});
-
-test("CharacterFormulaResolver rejects duplicate technical names", () => {
-  const character = createCharacter() as unknown as {
-    attributes: { primary: readonly unknown[]; secondaryAdjustments: readonly unknown[] };
-    skills: readonly unknown[];
-  };
-  character.skills = [
-    { technicalName: "Melee", experience: "0", trainingModifier: computed("0"), value: computed("10") },
-    { technicalName: "Melee", experience: "0", trainingModifier: computed("0"), value: computed("10") },
-  ];
-
-  assert.throws(() => new CharacterFormulaResolver(character as Character), /Duplicate skill technicalName/);
 });

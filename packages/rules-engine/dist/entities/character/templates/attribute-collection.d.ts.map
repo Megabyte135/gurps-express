@@ -1,0 +1,1 @@
+{"version":3,"file":"attribute-collection.d.ts","sourceRoot":"","sources":["../../../../src/entities/character/templates/attribute-collection.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,4BAA4B,CAAC;AAE5D,MAAM,WAAW,4BAA4B;IAC3C,QAAQ,CAAC,OAAO,EAAE,SAAS,SAAS,EAAE,CAAC;IACvC,QAAQ,CAAC,oBAAoB,EAAE,SAAS,SAAS,EAAE,CAAC;CACrD"}

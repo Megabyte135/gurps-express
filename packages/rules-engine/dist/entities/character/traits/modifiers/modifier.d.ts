@@ -1,4 +1,4 @@
-import type { CatalogKey, Decimal, EntityId, JsonSchema, JsonValue } from "../../../common.js";
+import type { CatalogKey, Decimal, EntityId } from "../../../common.js";
 import type { Prerequisite } from "../prerequisite.js";
 export interface Modifier {
     readonly id: EntityId;
@@ -8,8 +8,6 @@ export interface Modifier {
     readonly description: string;
     readonly tags: readonly string[];
     readonly appliesTo: readonly string[];
-    readonly selectionsSchema: JsonSchema;
-    readonly selections: Readonly<Record<string, JsonValue>>;
     readonly prerequisites: readonly Prerequisite[];
     readonly stacking: "unique" | "repeatable";
     readonly enabled: boolean;

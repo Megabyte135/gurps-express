@@ -1,4 +1,4 @@
-import type { CharacterPreset } from "./character/character-preset.js";
+import type { CharacterPreset } from "./character/templates/character-preset.js";
 import type { Item } from "./character/equipments/item.js";
 import type { Skill } from "./character/skills/skill.js";
 import type { Trait } from "./character/traits/trait.js";

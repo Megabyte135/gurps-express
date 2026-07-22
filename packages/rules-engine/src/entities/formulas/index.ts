@@ -1,2 +1,2 @@
 export * from "./formula.js";
-export * from "./character-formula-resolver.js";
+export * from "./resolver.js";

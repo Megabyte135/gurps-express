@@ -1,25 +1,39 @@
-import type { CatalogKey, Decimal, JsonValue } from "../../common.js";
+import { Entity, type CatalogKey, type Computable, type Decimal, type EntityId, type TechnicalName } from "../../common.js";
 import type { Formula } from "../../formulas/formula.js";
-import type { ChangeTrackedValue } from "../../values/change-tracked-value.js";
+import { ComputedValue } from "../../values/computed-value.js";
 import type { AttributeImprovementRule } from "./attribute-improvement-rule.js";
-/**
- * One configurable attribute. It is used unchanged in CharacterPreset and
- * in Character; character-specific values populate `value`.
- */
-export interface CharacterAttribute {
-    readonly id: string;
+export interface AttributeInput {
+    readonly id: EntityId;
+    readonly technicalName: TechnicalName;
     readonly catalogKey: CatalogKey;
-    readonly kind: "primary" | "secondary";
     readonly name: string;
     readonly description: string;
     readonly tags: readonly string[];
-    readonly minimumValue: Decimal;
+    readonly minValue: Decimal;
     readonly maximumValue: Decimal | null;
-    /** Primary attributes store their fixed baseline; secondary ones use a formula. */
     readonly calculation: Formula | null;
     readonly positiveImprovement: AttributeImprovementRule;
     readonly negativeImprovement: AttributeImprovementRule;
-    readonly settings: Readonly<Record<string, JsonValue>>;
-    readonly value: ChangeTrackedValue;
+    readonly value: ComputedValue;
+}
+/** One configurable attribute shared by character presets and characters. */
+export declare class Attribute extends Entity implements Computable {
+    #private;
+    readonly type: "attribute";
+    readonly catalogKey: CatalogKey;
+    readonly name: string;
+    readonly description: string;
+    readonly tags: readonly string[];
+    readonly maximumValue: Decimal | null;
+    readonly positiveImprovement: AttributeImprovementRule;
+    readonly negativeImprovement: AttributeImprovementRule;
+    constructor(input: AttributeInput);
+    get kind(): "primary" | "secondary";
+    get minValue(): Decimal;
+    set minValue(value: Decimal);
+    get calculation(): Formula | null;
+    set calculation(value: Formula | null);
+    get value(): ComputedValue;
+    set value(value: ComputedValue);
 }
 //# sourceMappingURL=attribute.d.ts.map

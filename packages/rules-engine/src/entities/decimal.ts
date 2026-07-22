@@ -1,4 +1,4 @@
-import DecimalJs from "decimal.js";
+import { Decimal as DecimalJs } from "decimal.js";
 import type { Decimal } from "./common.js";
 
 const DIVISION_DECIMAL_PLACES = 12;

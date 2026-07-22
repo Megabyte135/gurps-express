@@ -1,6 +1,6 @@
 import type { Result } from "../../common.js";
 import type { HitLocation } from "../../character/anatomy/hit-location.js";
-import type { DamageType } from "../damage-type.js";
+import type { DamageType } from "./damage-type.js";
 
 export interface HitLocationDamageResistance {
   readonly hitLocation: HitLocation;

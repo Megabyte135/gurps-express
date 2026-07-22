@@ -1,11 +1,10 @@
-import type { CharacterPreset } from "./character/character-preset.js";
-import type { Equipment } from "./character/equipments/equipment.js";
+import type { CharacterPreset } from "./character/templates/character-preset.js";
+import type { Item } from "./character/equipments/item.js";
 import type { Skill } from "./character/skills/skill.js";
 import type { Trait } from "./character/traits/trait.js";
 import type { Modifier } from "./character/traits/modifiers/modifier.js";
 /**
- * Unified source of character entities. The same Trait and Equipment types are
- * also stored directly in a character.
+ * Unified source of character entities.
  */
 export interface Catalogs {
     readonly defaultCharacterPresetId: string;
@@ -13,6 +12,6 @@ export interface Catalogs {
     readonly traits: readonly Trait[];
     readonly skills: readonly Skill[];
     readonly modifiers: readonly Modifier[];
-    readonly equipment: readonly Equipment[];
+    readonly equipment: readonly Item[];
 }
 //# sourceMappingURL=catalogs.d.ts.map

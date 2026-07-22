@@ -97,7 +97,7 @@ export class Resource extends Entity implements Computable {
     const minimumValue = evaluateDecimalFormula(input.minimumFormula, formulaResolver);
     if (!minimumValue.ok) return minimumValue;
 
-    return buildResource(input, minimumValue.value, input.maximumValue.value);
+    return Resource.build(input, minimumValue.value, input.maximumValue.value);
   }
 
   public static createWithGeneratedThresholds(
@@ -116,7 +116,7 @@ export class Resource extends Entity implements Computable {
     );
     if (!generatedThresholds.ok) return generatedThresholds;
 
-    return buildResource(
+    return Resource.build(
       {
         ...input,
         thresholds: generatedThresholds.value,
@@ -141,30 +141,30 @@ export class Resource extends Entity implements Computable {
   public get minimumValue(): Decimal {
     return this.#minimumValue;
   }
-}
 
-function buildResource(
-  input: ResourceInput,
-  minimumValue: Decimal,
-  maximumValue: Decimal,
-): Result<Resource, ResourceError> {
-  const rangeCheck = validateRange(minimumValue, maximumValue);
-  if (!rangeCheck.ok) return rangeCheck;
+  private static build(
+    input: ResourceInput,
+    minimumValue: Decimal,
+    maximumValue: Decimal,
+  ): Result<Resource, ResourceError> {
+    const rangeCheck = validateRange(minimumValue, maximumValue);
+    if (!rangeCheck.ok) return rangeCheck;
 
-  const validatedThresholds = validateAndNormalizeThresholds(input.thresholds, minimumValue, maximumValue);
-  if (!validatedThresholds.ok) return validatedThresholds;
+    const validatedThresholds = validateAndNormalizeThresholds(input.thresholds, minimumValue, maximumValue);
+    if (!validatedThresholds.ok) return validatedThresholds;
 
-  const value = validateResourceDecimal(input.value);
-  if (!value.ok) return value;
+    const value = validateResourceDecimal(input.value);
+    if (!value.ok) return value;
 
-  const normalizedValue = value.value;
-  const valueValidation = validateResourceValue(normalizedValue, minimumValue, maximumValue);
-  if (!valueValidation.ok) return valueValidation;
+    const normalizedValue = value.value;
+    const valueValidation = validateResourceValue(normalizedValue, minimumValue, maximumValue);
+    if (!valueValidation.ok) return valueValidation;
 
-  return {
-    ok: true,
-    value: new Resource(input, minimumValue, normalizedValue, validatedThresholds.value),
-  };
+    return {
+      ok: true,
+      value: new Resource(input, minimumValue, normalizedValue, validatedThresholds.value),
+    };
+  }
 }
 
 function generateThresholdsFromStep(

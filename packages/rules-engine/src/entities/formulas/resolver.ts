@@ -33,16 +33,22 @@ export class CharacterFormulaResolver implements FormulaResolver {
   private resolveReference(reference: string, context: FormulaContext): Decimal {
     const parts = reference.split(".");
     if (parts[0] === "attr") {
-      if (parts.length !== 2) throw new Error(`Invalid attribute reference: ${reference}.`);
-      const attribute = this.#attributes.get(parts[1]);
-      if (attribute === undefined) throw new Error(`Attribute ${parts[1]} was not found.`);
+      const technicalName = parts[1];
+      if (parts.length !== 2 || technicalName === undefined) {
+        throw new Error(`Invalid attribute reference: ${reference}.`);
+      }
+      const attribute = this.#attributes.get(technicalName);
+      if (attribute === undefined) throw new Error(`Attribute ${technicalName} was not found.`);
       return attribute.value.value;
     }
 
     if (parts[0] === "skill") {
-      if (parts.length < 2 || parts.length > 3) throw new Error(`Invalid skill reference: ${reference}.`);
-      const skill = this.#skills.get(parts[1]);
-      if (skill === undefined) throw new Error(`Skill ${parts[1]} was not found.`);
+      const technicalName = parts[1];
+      if (parts.length < 2 || parts.length > 3 || technicalName === undefined) {
+        throw new Error(`Invalid skill reference: ${reference}.`);
+      }
+      const skill = this.#skills.get(technicalName);
+      if (skill === undefined) throw new Error(`Skill ${technicalName} was not found.`);
       if (parts.length === 2) return skill.value.value;
       switch (parts[2]) {
         case "trainingModifier": return skill.trainingModifier.value;
@@ -156,7 +162,9 @@ class FormulaParser {
   }
 
   private get current(): Token {
-    return this.#tokens[this.#position];
+    const token = this.#tokens[this.#position];
+    if (token === undefined) throw new Error("Unexpected end of formula.");
+    return token;
   }
 }
 
@@ -164,7 +172,7 @@ function tokenize(source: Formula): readonly Token[] {
   const tokens: Token[] = [];
   let position = 0;
   while (position < source.length) {
-    const character = source[position];
+    const character = source.charAt(position);
     if (/\s/.test(character)) {
       position += 1;
       continue;
@@ -186,14 +194,18 @@ function tokenize(source: Formula): readonly Token[] {
     }
     const number = source.slice(position).match(/^\d+(?:\.\d+)?/);
     if (number !== null) {
-      tokens.push({ kind: "number", value: number[0] });
-      position += number[0].length;
+      const value = number[0];
+      if (value === undefined) throw new Error("A number token cannot be empty.");
+      tokens.push({ kind: "number", value });
+      position += value.length;
       continue;
     }
     const reference = source.slice(position).match(/^[A-Za-z_][A-Za-z0-9_.]*/);
     if (reference !== null) {
-      tokens.push({ kind: "reference", value: reference[0] });
-      position += reference[0].length;
+      const value = reference[0];
+      if (value === undefined) throw new Error("A reference token cannot be empty.");
+      tokens.push({ kind: "reference", value });
+      position += value.length;
       continue;
     }
     throw new Error(`Unexpected character in formula: ${character}.`);
