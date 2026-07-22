@@ -4,11 +4,15 @@ export type Decimal = string;
 /** UUID string identifying an entity embedded in an aggregate. */
 export type EntityId = string;
 
+/** Stable, English identifier unique within the relevant character entity list. */
+export type TechnicalName = string;
+
 export type EntityType = string;
 
 /** Base identity for any persisted object in the character aggregate. */
 export interface Entity {
   readonly id: EntityId;
+  readonly technicalName: TechnicalName;
   readonly type: EntityType;
 }
 

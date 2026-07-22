@@ -1,4 +1,4 @@
-import type { CatalogKey, Computable, Decimal, EntityId, Result } from "../../common.js";
+import type { CatalogKey, Computable, Decimal, EntityId, Result, TechnicalName } from "../../common.js";
 import {
   absoluteDecimal,
   addDecimals,
@@ -43,6 +43,7 @@ export type ResourceError =
 
 export interface ResourceInput {
   readonly id: EntityId;
+  readonly technicalName: TechnicalName;
   readonly catalogKey: CatalogKey;
   readonly name: string;
   readonly description: string;
@@ -54,6 +55,7 @@ export interface ResourceInput {
 
 interface ResourceInputWithoutThresholds {
   readonly id: EntityId;
+  readonly technicalName: TechnicalName;
   readonly catalogKey: CatalogKey;
   readonly name: string;
   readonly description: string;
@@ -82,6 +84,7 @@ export class Resource implements Computable {
     thresholds: readonly Decimal[],
   ) {
     this.id = input.id;
+    this.technicalName = input.technicalName;
     this.catalogKey = input.catalogKey;
     this.name = input.name;
     this.description = input.description;

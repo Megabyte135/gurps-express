@@ -29,6 +29,10 @@ export function divideDecimals(left: Decimal, right: Decimal): Decimal {
   return format(toDecimal(left).div(divisor).toDecimalPlaces(DIVISION_DECIMAL_PLACES, DecimalJs.ROUND_HALF_UP));
 }
 
+export function powerDecimals(left: Decimal, right: Decimal): Decimal {
+  return format(toDecimal(left).pow(toDecimal(right)));
+}
+
 export function absoluteDecimal(value: Decimal): Decimal {
   return format(toDecimal(value).abs());
 }

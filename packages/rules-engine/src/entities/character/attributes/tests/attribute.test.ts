@@ -3,12 +3,9 @@ import test from "node:test";
 import { Attribute } from "../attribute.js";
 import { ComputedValue, type FormulaResolver } from "../../../values/computed-value.js";
 
-const constant = (value: string) => ({ kind: "constant" as const, value });
+const constant = (value: string) => value;
 const resolver: FormulaResolver = {
-  resolve: (formula) => {
-    if (formula.kind !== "constant") throw new Error("Unexpected formula.");
-    return formula.value;
-  },
+  resolve: (formula) => formula,
 };
 
 const value = () => new ComputedValue({ baseValue: constant("10"), changesList: [] }, resolver);
@@ -16,6 +13,7 @@ const rule = { maximumLevel: "0", costFormula: constant("0") };
 
 const input = () => ({
   id: "strength",
+  technicalName: "ST",
   catalogKey: "st",
   name: "Strength",
   description: "",

@@ -1,17 +1,17 @@
 import type { Decimal, EntityId } from "../common.js";
 import { addDecimals, divideDecimals, multiplyDecimals, normalizeDecimal } from "../decimal.js";
-import type { Formula, FormulaVariables } from "../formulas/formula.js";
+import type { Formula, FormulaContext } from "../formulas/formula.js";
 import type { ComputedValueMutation, ComputedValueMutationInput } from "./value-mutation.js";
 
 export interface ComputedValueSnapshot {
   readonly baseValue: Formula;
   readonly changesList: readonly ComputedValueMutation[];
-  readonly variables?: FormulaVariables;
+  readonly context?: FormulaContext;
 }
 
 /** Evaluates a formula in the aggregate that owns this value. */
 export interface FormulaResolver {
-  resolve(formula: Formula, variables?: FormulaVariables): Decimal;
+  resolve(formula: Formula, context?: FormulaContext): Decimal;
 }
 
 /**
@@ -23,23 +23,23 @@ export class ComputedValue {
   #baseValue: Formula;
   readonly #changesList: ComputedValueMutation[];
   readonly #formulaResolver: FormulaResolver;
-  #variables: FormulaVariables;
+  #context: FormulaContext;
 
   public constructor(snapshot: ComputedValueSnapshot, formulaResolver: FormulaResolver) {
     this.#baseValue = snapshot.baseValue;
     this.#formulaResolver = formulaResolver;
     this.#changesList = [...snapshot.changesList].map(normalizeMutation);
-    this.#variables = { ...snapshot.variables };
+    this.#context = { ...snapshot.context };
     assertUniqueChangeIds(this.#changesList);
     assertContiguousSequence(this.#changesList);
   }
 
   public get baseValue(): Formula { return this.#baseValue; }
   public get value(): Decimal {
-    return replay(normalizeDecimal(this.#formulaResolver.resolve(this.#baseValue, this.#variables)), this.#changesList);
+    return replay(normalizeDecimal(this.#formulaResolver.resolve(this.#baseValue, this.#context)), this.#changesList);
   }
   public get changesList(): readonly ComputedValueMutation[] { return this.#changesList.map(cloneMutation); }
-  public get variables(): FormulaVariables { return { ...this.#variables }; }
+  public get context(): FormulaContext { return { ...this.#context }; }
 
   public applyMutation(input: ComputedValueMutationInput): ComputedValueMutation {
     if (this.#changesList.some((change) => change.id === input.id)) {
@@ -65,12 +65,12 @@ export class ComputedValue {
     this.#baseValue = baseValue;
   }
 
-  public setVariables(variables: FormulaVariables): void {
-    this.#variables = { ...variables };
+  public setContext(context: FormulaContext): void {
+    this.#context = { ...context };
   }
 
   public toSnapshot(): ComputedValueSnapshot {
-    return { baseValue: this.#baseValue, changesList: this.changesList, variables: this.variables };
+    return { baseValue: this.#baseValue, changesList: this.changesList, context: this.context };
   }
 }
 

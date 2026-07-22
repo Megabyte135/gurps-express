@@ -1,7 +1,5 @@
 import type { Computable, Decimal, EntityId } from "../../common.js";
-import type { Formula } from "../../formulas/formula.js";
-
-export type EffectOperand = Extract<Formula["kind"], "add" | "multiply" | "divide">;
+export type EffectOperand = "add" | "multiply" | "divide";
 
 export interface Effect {
   readonly id: EntityId;

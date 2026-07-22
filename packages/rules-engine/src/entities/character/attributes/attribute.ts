@@ -1,10 +1,11 @@
-import type { CatalogKey, Computable, Decimal, EntityId } from "../../common.js";
+import type { CatalogKey, Computable, Decimal, EntityId, TechnicalName } from "../../common.js";
 import type { Formula } from "../../formulas/formula.js";
 import { ComputedValue } from "../../values/computed-value.js";
 import type { AttributeImprovementRule } from "./attribute-improvement-rule.js";
 
 export interface AttributeInput {
   readonly id: EntityId;
+  readonly technicalName: TechnicalName;
   readonly catalogKey: CatalogKey;
   readonly name: string;
   readonly description: string;
@@ -20,6 +21,7 @@ export interface AttributeInput {
 /** One configurable attribute shared by character presets and characters. */
 export class Attribute implements Computable {
   readonly id: EntityId;
+  readonly technicalName: TechnicalName;
   readonly type: "attribute" = "attribute";
   readonly catalogKey: CatalogKey;
   readonly name: string;
@@ -34,6 +36,7 @@ export class Attribute implements Computable {
 
   public constructor(input: AttributeInput) {
     this.id = input.id;
+    this.technicalName = input.technicalName;
     this.catalogKey = input.catalogKey;
     this.name = input.name;
     this.description = input.description;

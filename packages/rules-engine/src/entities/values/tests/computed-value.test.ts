@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { ComputedValue, type FormulaResolver } from "../computed-value.js";
 
-const constant = (value: string) => ({ kind: "constant" as const, value });
+const constant = (value: string) => value;
 
 test("ComputedValue applies mutations to a constant formula", () => {
   const value = new ComputedValue({ baseValue: constant("10"), changesList: [] }, constantResolver);
@@ -13,14 +13,10 @@ test("ComputedValue applies mutations to a constant formula", () => {
 test("ComputedValue recalculates when a formula dependency changes", () => {
   let strength = "10";
   const resolver: FormulaResolver = {
-    resolve: (formula) => {
-      if (formula.kind === "reference") return strength;
-      if (formula.kind === "constant") return formula.value;
-      throw new Error("Unexpected formula.");
-    },
+    resolve: (formula) => formula === "attr.ST" ? strength : formula,
   };
   const value = new ComputedValue({
-    baseValue: { kind: "reference", target: { kind: "attribute", attributeId: "st", value: "effective" } },
+    baseValue: "attr.ST",
     changesList: [],
   }, resolver);
 
@@ -38,9 +34,5 @@ test("ComputedValue preserves changes when its base formula is replaced", () => 
 });
 
 const constantResolver: FormulaResolver = {
-  resolve: (formula) => {
-    if (formula.kind !== "constant") throw new Error("Unexpected formula.");
-    return formula.value;
-  },
+  resolve: (formula) => formula,
 };
-
