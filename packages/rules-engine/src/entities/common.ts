@@ -10,14 +10,34 @@ export type TechnicalName = string;
 export type EntityType = string;
 
 /** Base identity for any persisted object in the character aggregate. */
-export interface Entity {
+export abstract class Entity {
   readonly id: EntityId;
-  readonly technicalName: TechnicalName;
-  readonly type: EntityType;
+  abstract readonly type: EntityType;
+  #technicalName: TechnicalName;
+
+  protected constructor(id: EntityId, technicalName: TechnicalName) {
+    this.id = id;
+    this.#technicalName = assertTechnicalName(technicalName);
+  }
+
+  public get technicalName(): TechnicalName {
+    return this.#technicalName;
+  }
+
+  public set technicalName(value: TechnicalName) {
+    this.#technicalName = assertTechnicalName(value);
+  }
 }
 
 /** An entity that owns `ComputedValue` field. */
 export interface Computable extends Entity {}
+
+function assertTechnicalName(value: TechnicalName): TechnicalName {
+  if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(value)) {
+    throw new Error("technicalName must be English, start with a letter, and contain no spaces.");
+  }
+  return value;
+}
 
 /** A stable key copied from a catalog entity. It is not a catalog link. */
 export type CatalogKey = string;

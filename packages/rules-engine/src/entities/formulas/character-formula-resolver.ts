@@ -1,7 +1,7 @@
 import type { Character } from "../character/character.js";
 import type { Attribute } from "../character/attributes/attribute.js";
 import type { Skill } from "../character/skills/skill.js";
-import type { Decimal, TechnicalName } from "../common.js";
+import type { Decimal, Entity, TechnicalName } from "../common.js";
 import {
   addDecimals,
   divideDecimals,
@@ -12,8 +12,6 @@ import {
 } from "../decimal.js";
 import type { FormulaResolver } from "../values/computed-value.js";
 import type { Formula, FormulaContext } from "./formula.js";
-
-const TECHNICAL_NAME_PATTERN = /^[A-Za-z][A-Za-z0-9_]*$/;
 
 /** Resolves formula expressions against one character's attributes and skills. */
 export class CharacterFormulaResolver implements FormulaResolver {
@@ -59,15 +57,12 @@ export class CharacterFormulaResolver implements FormulaResolver {
   }
 }
 
-function indexByTechnicalName<T extends { readonly technicalName: TechnicalName }>(
+function indexByTechnicalName<T extends Entity>(
   entities: readonly T[],
   entityKind: string,
 ): ReadonlyMap<TechnicalName, T> {
   const index = new Map<TechnicalName, T>();
   for (const entity of entities) {
-    if (!TECHNICAL_NAME_PATTERN.test(entity.technicalName)) {
-      throw new Error(`${entityKind} technicalName must be English, start with a letter, and contain no spaces.`);
-    }
     if (index.has(entity.technicalName)) {
       throw new Error(`Duplicate ${entityKind} technicalName: ${entity.technicalName}.`);
     }
