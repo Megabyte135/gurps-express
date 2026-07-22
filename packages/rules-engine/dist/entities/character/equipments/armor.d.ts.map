@@ -1,1 +1,0 @@
-{"version":3,"file":"armor.d.ts","sourceRoot":"","sources":["../../../../src/entities/character/equipments/armor.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,IAAI,EAAE,MAAM,WAAW,CAAC;AACtC,OAAO,KAAK,EAAE,gBAAgB,EAAE,MAAM,yCAAyC,CAAC;AAEhF,4DAA4D;AAC5D,MAAM,WAAW,KAAM,SAAQ,IAAI;IACjC,QAAQ,CAAC,gBAAgB,EAAE,gBAAgB,CAAC;CAC7C"}

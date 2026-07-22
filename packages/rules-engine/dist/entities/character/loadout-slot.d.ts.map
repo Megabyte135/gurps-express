@@ -1,1 +1,0 @@
-{"version":3,"file":"loadout-slot.d.ts","sourceRoot":"","sources":["../../../src/entities/character/loadout-slot.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,cAAc,CAAC;AAE7C,MAAM,WAAW,WAAW;IAC1B,QAAQ,CAAC,IAAI,EAAE,MAAM,CAAC;IACtB,QAAQ,CAAC,MAAM,EAAE,QAAQ,CAAC;CAC3B"}

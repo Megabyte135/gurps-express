@@ -1,1 +1,0 @@
-{"version":3,"file":"attribute-improvement-rule.d.ts","sourceRoot":"","sources":["../../../../src/entities/character/attributes/attribute-improvement-rule.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,OAAO,EAAE,MAAM,iBAAiB,CAAC;AAC/C,OAAO,KAAK,EAAE,OAAO,EAAE,MAAM,2BAA2B,CAAC;AAEzD,MAAM,WAAW,wBAAwB;IACvC,QAAQ,CAAC,YAAY,EAAE,OAAO,CAAC;IAC/B,QAAQ,CAAC,WAAW,EAAE,OAAO,CAAC;CAC/B"}

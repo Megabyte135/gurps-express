@@ -1,1 +1,0 @@
-{"version":3,"file":"custom-field.d.ts","sourceRoot":"","sources":["../../../../src/entities/character/fields/custom-field.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,iBAAiB,CAAC;AAEhD,MAAM,WAAW,oBAAoB;IACnC,QAAQ,CAAC,EAAE,EAAE,QAAQ,CAAC;IACtB,QAAQ,CAAC,IAAI,EAAE,MAAM,CAAC;IACtB,QAAQ,CAAC,KAAK,EAAE,MAAM,CAAC;CACxB"}

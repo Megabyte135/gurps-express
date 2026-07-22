@@ -1,1 +1,0 @@
-{"version":3,"file":"resource-threshold.d.ts","sourceRoot":"","sources":["../../../../src/entities/character/resources/resource-threshold.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,iBAAiB,CAAC;AAEzD,MAAM,WAAW,iBAAiB;IAChC,0EAA0E;IAC1E,QAAQ,CAAC,UAAU,EAAE,OAAO,CAAC;IAC7B,QAAQ,CAAC,YAAY,EAAE,SAAS,QAAQ,EAAE,CAAC;CAC5C"}
