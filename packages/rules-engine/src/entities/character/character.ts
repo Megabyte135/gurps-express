@@ -11,6 +11,7 @@ import type { Resource } from "./resources/resource.js";
 import type { Skill } from "./skills/skill.js";
 import type { Trait } from "./traits/trait.js";
 import type { Decimal } from "../common.js";
+import { Attribute } from "./attributes/attribute.js";
 
 export interface Character {
   readonly id: EntityId;

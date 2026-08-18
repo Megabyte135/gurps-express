@@ -29,6 +29,13 @@ export function divideDecimals(left: Decimal, right: Decimal): Decimal {
   return format(toDecimal(left).div(divisor).toDecimalPlaces(DIVISION_DECIMAL_PLACES, DecimalJs.ROUND_HALF_UP));
 }
 
+/** Divides and always rounds down, the dice divisor rule. */
+export function floorDivideDecimals(left: Decimal, right: Decimal): Decimal {
+  const divisor = toDecimal(right);
+  if (divisor.isZero()) throw new RangeError("A value change cannot divide by zero.");
+  return format(toDecimal(left).div(divisor).floor());
+}
+
 export function powerDecimals(left: Decimal, right: Decimal): Decimal {
   return format(toDecimal(left).pow(toDecimal(right)));
 }
