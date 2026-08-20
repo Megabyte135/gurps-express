@@ -6,7 +6,9 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace=@gurps-express/rules-engine",
-    "typecheck": "npm run typecheck --workspace=@gurps-express/rules-engine"
+    "build": "npm run build --workspace=@gurps-express/rules-engine && npm run build --workspace=@gurps-express/ui",
+    "typecheck": "npm run typecheck --workspace=@gurps-express/rules-engine && npm run typecheck --workspace=@gurps-express/ui",
+    "test": "npm run test --workspace=@gurps-express/rules-engine",
+    "dev": "npm run build --workspace=@gurps-express/rules-engine && npm run dev --workspace=@gurps-express/ui"
   }
 }

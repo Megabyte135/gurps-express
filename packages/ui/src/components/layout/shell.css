@@ -1,0 +1,119 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-body {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  max-width: calc(var(--content-w) + var(--sidebar-w) + 64px);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.content {
+  flex: 0 1 var(--content-w);
+  min-width: 0;
+  padding: 26px 0 120px;
+  container-type: inline-size;
+}
+
+.sidebar-wrap {
+  flex: 0 0 auto;
+  width: 0;
+  position: sticky;
+  top: var(--toolbar-h);
+  height: calc(100vh - var(--toolbar-h));
+  overflow: hidden;
+  transition: width var(--dur-slow) var(--ease);
+}
+
+.app-body.is-sidebar-open .sidebar-wrap {
+  width: calc(var(--sidebar-w) + 24px);
+}
+
+.sidebar {
+  width: var(--sidebar-w);
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border-left: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+.columns-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.columns-2 .section {
+  margin-bottom: 16px;
+}
+
+@container (max-width: 640px) {
+  .columns-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1100px) {
+  .app-body {
+    display: block;
+    padding: 0 16px;
+  }
+
+  .content {
+    padding: 20px 0 110px;
+  }
+
+  .sidebar-wrap {
+    position: fixed;
+    top: var(--toolbar-h);
+    right: 0;
+    bottom: 0;
+    height: auto;
+    width: min(var(--sidebar-w), 92vw);
+    transform: translateX(105%);
+    transition: transform var(--dur-slow) var(--ease);
+    z-index: var(--z-sidebar);
+    box-shadow: var(--shadow-2);
+  }
+
+  .app-body.is-sidebar-open .sidebar-wrap {
+    transform: none;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: var(--toolbar-h) 0 0 0;
+    background: rgba(0, 0, 0, 0.42);
+    z-index: var(--z-backdrop);
+    border: none;
+    animation: backdrop-in var(--dur) ease;
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

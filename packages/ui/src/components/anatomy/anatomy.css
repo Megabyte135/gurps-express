@@ -1,0 +1,245 @@
+.anatomy-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.anatomy-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.anatomy-roll {
+  padding: 4px 10px;
+}
+
+.doll-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  container-type: inline-size;
+}
+
+.doll {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.doll-silhouette {
+  fill: var(--surface-sunken);
+  stroke: var(--border-strong);
+  stroke-width: 5;
+}
+
+.doll-zone {
+  fill: transparent;
+  stroke: var(--border-strong);
+  stroke-width: 4;
+  transition: fill var(--dur-fast), stroke var(--dur-fast);
+  pointer-events: none;
+}
+
+.doll-zone.is-active {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+}
+
+.doll-zone.is-hit {
+  fill: var(--danger-soft);
+  stroke: var(--danger);
+  stroke-width: 6;
+  animation: zone-hit-flash 700ms var(--ease);
+}
+
+@keyframes zone-hit-flash {
+  0% {
+    fill: var(--danger);
+  }
+
+  100% {
+    fill: var(--danger-soft);
+  }
+}
+
+.doll-zone-hit {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.doll-zone-hit:focus-visible {
+  stroke: var(--accent);
+  stroke-width: 4;
+  stroke-dasharray: 14 10;
+}
+
+.doll-tip {
+  position: absolute;
+  left: var(--tip-left);
+  top: var(--tip-top);
+  transform: translate(-50%, calc(-100% - 12px));
+  max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-m);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  pointer-events: none;
+  z-index: var(--z-menu);
+  animation: doll-tip-in 120ms var(--ease);
+}
+
+@keyframes doll-tip-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 6px));
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 12px));
+  }
+}
+
+.doll-tip-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.doll-tip-hit {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--accent);
+}
+
+.doll-tip-desc {
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.doll-wrap:has(.doll-tip[style*="--tip-top: 1"]) .doll-tip,
+.doll-tip[data-flip="down"] {
+  transform: translate(-50%, 12px);
+}
+
+.anatomy-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  background: var(--surface-sunken);
+  animation: verdict-in 180ms var(--ease);
+}
+
+.anatomy-details-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.anatomy-details-hit {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.anatomy-details-original {
+  font-size: 10.5px;
+  font-style: italic;
+  color: var(--text-faint);
+}
+
+.anatomy-details-desc {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+@container (max-width: 240px) {
+  .doll-tip-desc {
+    display: none;
+  }
+}
+
+[data-theme="fantasy"] .doll-silhouette {
+  stroke-width: 8;
+  stroke: var(--border-strong);
+}
+
+[data-theme="fantasy"] .doll-zone {
+  stroke-width: 3;
+  stroke-dasharray: none;
+}
+
+[data-theme="fantasy"] .doll-wrap {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-s);
+  padding: 8px;
+  background: var(--surface);
+}
+
+[data-theme="scifi"] .doll-silhouette {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 4;
+  stroke-dasharray: 18 12;
+  opacity: 0.8;
+}
+
+[data-theme="scifi"] .doll-zone {
+  stroke: var(--border-strong);
+  stroke-width: 3;
+}
+
+[data-theme="scifi"] .doll-zone.is-active {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+}
+
+[data-theme="scifi"] .doll-wrap {
+  position: relative;
+}
+
+[data-theme="scifi"] .doll-wrap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.45;
+  animation: doll-scanline 3.2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes doll-scanline {
+  from {
+    top: 0%;
+  }
+
+  to {
+    top: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="scifi"] .doll-wrap::after {
+    animation: none;
+    top: 0;
+  }
+}

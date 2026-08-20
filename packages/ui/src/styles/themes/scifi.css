@@ -1,0 +1,267 @@
+/* ============================================================
+   Sci-Fi — бортовой HUD.
+   Графит и циан; заголовки Exo 2, текст Play, данные JetBrains
+   Mono. Срезанные углы, скобки-маркеры, технические метки «//»,
+   сегментированные шкалы, голографические кубики с глитчем.
+   ============================================================ */
+
+[data-theme="scifi"] {
+  --font-display: "Exo 2", "Segoe UI", system-ui, sans-serif;
+  --font-text: "Play", "Segoe UI", system-ui, sans-serif;
+  --font-stat: "JetBrains Mono", "Consolas", monospace;
+  --radius-s: 3px;
+  --radius-m: 4px;
+}
+
+[data-theme="scifi"] body {
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+/* ---------- Палитра: вакуум ---------- */
+[data-theme="scifi"][data-mode="dark"] {
+  --bg: #0b0e13;
+  --surface: #10151e;
+  --surface-sunken: #0a0d12;
+  --surface-hover: #151c28;
+  --border: #1d2634;
+  --border-strong: #2c3a50;
+  --text: #d9e4f0;
+  --text-muted: #8494ab;
+  --text-faint: #5a687e;
+  --accent: #56c1ff;
+  --accent-strong: #8ad4ff;
+  --accent-soft: rgba(86, 193, 255, 0.1);
+  --accent-contrast: #06121c;
+  --success: #5ecf97;
+  --success-soft: rgba(94, 207, 151, 0.1);
+  --warning: #f0a840;
+  --warning-soft: rgba(240, 168, 64, 0.12);
+  --danger: #ff7a6b;
+  --danger-soft: rgba(255, 122, 107, 0.1);
+  --shadow-1: none;
+  --shadow-2: 0 10px 34px rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- Палитра: лаборатория ---------- */
+[data-theme="scifi"][data-mode="light"] {
+  --bg: #eef2f6;
+  --surface: #ffffff;
+  --surface-sunken: #e4eaf1;
+  --surface-hover: #f3f7fb;
+  --border: #d3dce6;
+  --border-strong: #aebdce;
+  --text: #18222e;
+  --text-muted: #5a6b7e;
+  --text-faint: #8a98a8;
+  --accent: #0e6fb8;
+  --accent-strong: #0a5a97;
+  --accent-soft: rgba(14, 111, 184, 0.09);
+  --accent-contrast: #ffffff;
+  --success: #1d7d55;
+  --success-soft: rgba(29, 125, 85, 0.1);
+  --warning: #9a6a00;
+  --warning-soft: rgba(154, 106, 0, 0.12);
+  --danger: #b3382c;
+  --danger-soft: rgba(179, 56, 44, 0.1);
+  --shadow-1: 0 1px 2px rgba(16, 26, 40, 0.08);
+  --shadow-2: 0 10px 30px rgba(16, 26, 40, 0.18);
+}
+
+/* ---------- Фон: сетка и свечение ---------- */
+[data-theme="scifi"][data-mode="dark"] body {
+  background-image:
+    radial-gradient(1000px 520px at 72% -12%, rgba(86, 193, 255, 0.08), transparent 60%),
+    linear-gradient(rgba(86, 193, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(86, 193, 255, 0.035) 1px, transparent 1px);
+  background-size: 100% 100%, 28px 28px, 28px 28px;
+}
+
+[data-theme="scifi"][data-mode="light"] body {
+  background-image:
+    radial-gradient(1000px 520px at 72% -12%, rgba(14, 111, 184, 0.09), transparent 60%),
+    linear-gradient(rgba(14, 111, 184, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 111, 184, 0.045) 1px, transparent 1px);
+  background-size: 100% 100%, 28px 28px, 28px 28px;
+}
+
+/* ---------- Секции: срезанный угол и скобки ---------- */
+[data-theme="scifi"] .section {
+  position: relative;
+  border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+}
+
+[data-theme="scifi"] .section::before,
+[data-theme="scifi"] .section::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  pointer-events: none;
+}
+
+[data-theme="scifi"] .section::before {
+  left: 5px;
+  top: 5px;
+  border-left: 2px solid var(--accent);
+  border-top: 2px solid var(--accent);
+}
+
+[data-theme="scifi"] .section::after {
+  right: 5px;
+  bottom: 5px;
+  border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+}
+
+/* ---------- Заголовки: технические метки ---------- */
+[data-theme="scifi"] .section-title {
+  font-family: var(--font-display);
+  letter-spacing: 0.2em;
+}
+
+[data-theme="scifi"] .section-title::before {
+  content: "//";
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0;
+  color: var(--accent);
+  margin-right: 7px;
+}
+
+/* ---------- Hero: акцентная линия ---------- */
+[data-theme="scifi"] .hero-name {
+  letter-spacing: 0.03em;
+}
+
+[data-theme="scifi"] .hero-name::after {
+  content: "";
+  display: block;
+  width: 88px;
+  height: 2px;
+  margin-top: 7px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+/* ---------- Статы: показания HUD ---------- */
+[data-theme="scifi"] .stat-primary-value {
+  color: var(--accent);
+  text-shadow: 0 0 14px var(--accent-soft);
+}
+
+/* ---------- Кнопки: фаска ---------- */
+[data-theme="scifi"] .btn {
+  font-family: var(--font-display);
+  border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
+}
+
+[data-theme="scifi"] .btn.is-active {
+  box-shadow: 0 0 10px var(--accent-soft);
+}
+
+[data-theme="scifi"] .btn-primary {
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
+  border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+}
+
+[data-theme="scifi"] .icon-button {
+  border-radius: 0;
+}
+
+/* ---------- Тулбар ---------- */
+[data-theme="scifi"] .toolbar {
+  border-bottom-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+
+[data-theme="scifi"] .toolbar-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+}
+
+[data-theme="scifi"] .toolbar-points-bar i {
+  box-shadow: 0 0 6px var(--accent-soft);
+}
+
+/* ---------- Трекеры: сегменты энергии ---------- */
+[data-theme="scifi"] .tracker-bar i,
+[data-theme="scifi"] .mini-bar i {
+  background: repeating-linear-gradient(90deg, var(--tracker-color) 0 7px, transparent 7px 9px);
+}
+
+/* ---------- Поля ввода ---------- */
+[data-theme="scifi"] input {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+/* ---------- Кубики: голограмма ---------- */
+[data-theme="scifi"] .die-face {
+  border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  background: var(--surface-sunken);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border-strong));
+}
+
+[data-theme="scifi"] .die-pips i.on {
+  background: var(--accent);
+  box-shadow: 0 0 5px var(--accent);
+}
+
+[data-theme="scifi"] .die-face.is-selected {
+  box-shadow: 0 0 0 1px var(--accent), 0 0 12px var(--accent-soft);
+}
+
+[data-theme="scifi"] .die-face.is-rolling {
+  animation-name: die-glitch;
+  animation-duration: 90ms;
+}
+
+@keyframes die-glitch {
+  0%,
+  100% {
+    transform: translate(0, 0) skewX(0deg);
+  }
+
+  20% {
+    transform: translate(-2px, 1px) skewX(-6deg);
+  }
+
+  40% {
+    transform: translate(2px, -1px) skewX(4deg);
+  }
+
+  60% {
+    transform: translate(-1px, -2px) skewX(-3deg);
+  }
+
+  80% {
+    transform: translate(1px, 2px) skewX(5deg);
+  }
+}
+
+/* ---------- Подписи и контейнеры ---------- */
+[data-theme="scifi"] .container-name {
+  font-family: var(--font-display);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+[data-theme="scifi"] .dice-block-title {
+  font-family: var(--font-display);
+  letter-spacing: 0.22em;
+}
+
+[data-theme="scifi"] .dice-tabs button {
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+}
+
+[data-theme="scifi"] ::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent) 45%, var(--border-strong));
+}

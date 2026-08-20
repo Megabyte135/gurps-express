@@ -1,0 +1,231 @@
+/* ============================================================
+   Fantasy — средневековая рукопись.
+   Пергамент и чернила, оксблад и золото; заголовки антиквой
+   Cormorant, текст PT Serif, крупные числа — Cormorant.
+   Двойные рамки, ромбовидные окончания, буквица, костяные
+   кубики, «раскат» вместо тумбла.
+   ============================================================ */
+
+[data-theme="fantasy"] {
+  --font-display: "Cormorant", "Georgia", serif;
+  --font-text: "PT Serif", "Georgia", serif;
+  --font-stat: "Cormorant", "Georgia", serif;
+  --radius-s: 2px;
+  --radius-m: 3px;
+}
+
+[data-theme="fantasy"] body {
+  font-size: 13.5px;
+  line-height: 1.62;
+}
+
+/* ---------- Палитра: пергамент ---------- */
+[data-theme="fantasy"][data-mode="light"] {
+  --bg: #f2e9d5;
+  --surface: #f8f1e1;
+  --surface-sunken: #e9dfc6;
+  --surface-hover: #efe6cf;
+  --border: #d8c9a6;
+  --border-strong: #b59f72;
+  --text: #2e2618;
+  --text-muted: #6f6248;
+  --text-faint: #998c6f;
+  --accent: #8e3b2f;
+  --accent-strong: #732d23;
+  --accent-soft: rgba(142, 59, 47, 0.1);
+  --accent-contrast: #f8f1e1;
+  --success: #4a6b3a;
+  --success-soft: rgba(74, 107, 58, 0.12);
+  --warning: #8a621c;
+  --warning-soft: rgba(138, 98, 28, 0.12);
+  --danger: #7a2a20;
+  --danger-soft: rgba(122, 42, 32, 0.1);
+  --shadow-1: none;
+  --shadow-2: 0 10px 30px rgba(60, 45, 20, 0.25);
+}
+
+/* ---------- Палитра: при свечах ---------- */
+[data-theme="fantasy"][data-mode="dark"] {
+  --bg: #17120c;
+  --surface: #201a12;
+  --surface-sunken: #150f0a;
+  --surface-hover: #2a2117;
+  --border: #3b3222;
+  --border-strong: #57472e;
+  --text: #e8dcc2;
+  --text-muted: #a99c7e;
+  --text-faint: #7a7059;
+  --accent: #c89b4b;
+  --accent-strong: #dbb264;
+  --accent-soft: rgba(200, 155, 75, 0.12);
+  --accent-contrast: #1a150d;
+  --success: #8fa86a;
+  --success-soft: rgba(143, 168, 106, 0.12);
+  --warning: #c89b4b;
+  --warning-soft: rgba(200, 155, 75, 0.12);
+  --danger: #c4685a;
+  --danger-soft: rgba(196, 104, 90, 0.12);
+  --shadow-1: none;
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- Бумага: волокна и виньетка ---------- */
+[data-theme="fantasy"][data-mode="light"] body {
+  background-image: radial-gradient(1200px 800px at 50% 0%, rgba(185, 138, 47, 0.1), transparent 62%);
+}
+
+[data-theme="fantasy"][data-mode="dark"] body {
+  background-image: radial-gradient(900px 620px at 50% -10%, rgba(200, 155, 75, 0.08), transparent 65%);
+}
+
+[data-theme="fantasy"] .app::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(120, 90, 40, 0.03) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(120, 90, 40, 0.025) 0 1px, transparent 1px 3px);
+}
+
+/* ---------- Карточки: двойная рамка ---------- */
+[data-theme="fantasy"] .section {
+  border-color: var(--border-strong);
+  box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--border);
+}
+
+[data-theme="fantasy"] .section-body-inner {
+  padding: 4px 14px 13px;
+}
+
+/* ---------- Заголовки секций: антиква с ромбом ---------- */
+[data-theme="fantasy"] .section-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+[data-theme="fantasy"] .section-title::after {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  transform: rotate(45deg);
+  background: var(--accent);
+  margin-left: 9px;
+  vertical-align: 2px;
+}
+
+/* ---------- Тулбар: двойная линия ---------- */
+[data-theme="fantasy"] .toolbar {
+  border-bottom: 3px double var(--border-strong);
+}
+
+[data-theme="fantasy"] .toolbar-title {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: none;
+}
+
+/* ---------- Hero: буквица и курсив ---------- */
+[data-theme="fantasy"] .hero-name::first-letter {
+  font-size: 1.26em;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+[data-theme="fantasy"] .hero-meta {
+  font-style: italic;
+}
+
+[data-theme="fantasy"] .empty-note {
+  font-style: italic;
+}
+
+/* ---------- Кнопки ---------- */
+[data-theme="fantasy"] .btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.05em;
+}
+
+[data-theme="fantasy"] .btn-primary {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- Кубики: кость ---------- */
+[data-theme="fantasy"] .die-face {
+  box-shadow: inset 0 0 0 2px var(--surface), inset 0 0 0 3px var(--border);
+}
+
+[data-theme="fantasy"][data-mode="light"] .die-face {
+  background: #f6efdc;
+}
+
+[data-theme="fantasy"][data-mode="light"] .die-pips i.on {
+  background: #2e2618;
+}
+
+[data-theme="fantasy"][data-mode="dark"] .die-face {
+  background: #241c11;
+}
+
+[data-theme="fantasy"][data-mode="dark"] .die-pips i.on {
+  background: #e8dcc2;
+}
+
+[data-theme="fantasy"] .die-face.is-rolling {
+  animation-name: die-tumble-fantasy;
+  animation-duration: 260ms;
+}
+
+@keyframes die-tumble-fantasy {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-10deg) translateY(-2px);
+  }
+
+  50% {
+    transform: rotate(0deg) translateY(0);
+  }
+
+  75% {
+    transform: rotate(10deg) translateY(-2px);
+  }
+}
+
+/* ---------- Подписи и контейнеры ---------- */
+[data-theme="fantasy"] .container-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+[data-theme="fantasy"] .dice-block-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+[data-theme="fantasy"] .dice-tabs button {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.04em;
+}

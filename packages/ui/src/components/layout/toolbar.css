@@ -1,0 +1,202 @@
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-toolbar);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: var(--toolbar-h);
+  padding: 0 16px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.toolbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.toolbar-logo {
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  border: 2px solid var(--accent);
+  flex: none;
+}
+
+[data-theme="scifi"] .toolbar-logo {
+  transform: none;
+  border-width: 1.5px;
+  box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--accent);
+}
+
+.toolbar-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.toolbar-char {
+  font-size: 12px;
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toolbar-char::before {
+  content: "— ";
+}
+
+.toolbar-points {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.toolbar-points-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.toolbar-points-total {
+  color: var(--text-faint);
+  font-weight: 400;
+  font-size: 11.5px;
+}
+
+.toolbar-points-bar {
+  display: inline-block;
+  width: 56px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+
+.toolbar-points-bar i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 400ms var(--ease);
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolbar-actions > .tip {
+  display: inline-flex;
+}
+
+.theme-picker {
+  position: relative;
+  display: inline-flex;
+}
+
+.theme-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 176px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-2);
+  z-index: var(--z-menu);
+  animation: menu-in 120ms var(--ease);
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: var(--radius-s);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: left;
+  transition: background-color var(--dur-fast), color var(--dur-fast);
+}
+
+.theme-option:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.theme-option[aria-checked="true"] {
+  color: var(--accent);
+}
+
+.theme-swatch {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  flex: none;
+}
+
+.theme-swatch i {
+  width: 50%;
+  height: 100%;
+}
+
+.theme-option-name {
+  flex: 1;
+}
+
+.theme-check {
+  width: 7px;
+  height: 7px;
+  transform: rotate(45deg);
+  background: var(--accent);
+}
+
+@media (max-width: 860px) {
+  .toolbar-char {
+    display: none;
+  }
+
+  .toolbar-label {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .toolbar-points-bar {
+    display: none;
+  }
+
+  .toolbar-title {
+    display: none;
+  }
+}
